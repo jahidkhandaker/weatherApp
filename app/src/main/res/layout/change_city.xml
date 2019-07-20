@@ -28,7 +28,6 @@
         android:ems="10"
         android:hint="@string/enter_city_name"
         android:inputType="textPersonName"
-        android:text="@string/default_query"
         android:textAlignment="center"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"

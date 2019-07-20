@@ -2,6 +2,7 @@ package nsu.weather;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,7 +40,7 @@ public class WeatherController extends AppCompatActivity {
     final float MIN_DISTANCE = 1000;
 
 
-    final String LOGCAT_TAG = "Clima";
+    final String LOGCAT_TAG = "weatherApp";
 
 
     final String LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
@@ -64,16 +66,39 @@ public class WeatherController extends AppCompatActivity {
         mWeatherImage = findViewById(R.id.ChangeCityLocation);
         mTemperatureLabel = findViewById(R.id.tempTV);
         changeCityButton = findViewById(R.id.ChangeCityButton);
+
+        changeCityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(WeatherController.this, ChangeCityActivity.class );
+                startActivity(myIntent);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("weatherApp", "onResume() Called");
-        Log.d("weatherApp", "for current location");
-        getWeatherForCurrentLocation();
+        Intent myIntent = getIntent();
+        String city = myIntent.getStringExtra("City");
+
+        if (city !=null){
+            getWeatherForNewCity(city);
+        } else {
+            Log.d("weatherApp", "for current location");
+            getWeatherForCurrentLocation();
+        }
+
+       
     }
 
+    private void getWeatherForNewCity(String city) {
+       RequestParams params =new RequestParams();
+       params.put("q",city);
+       params.put("appId",APP_ID);
+       letsDoSomeNetworking(params);
+    }
 
 
     private void getWeatherForCurrentLocation() {
@@ -93,6 +118,7 @@ public class WeatherController extends AppCompatActivity {
                 params.put("lat", latitude);
                 params.put("lon", longitude);
                 params.put("appid", APP_ID);
+
                 letsDoSomeNetworking(params);
 
             }
@@ -177,4 +203,10 @@ public class WeatherController extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mLocationManager != null) mLocationManager.removeUpdates(mLocationListener);
+    }
 }
