@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +49,7 @@ public class WeatherController extends AppCompatActivity {
     TextView mCityLabel;
     ImageView mWeatherImage;
     TextView mTemperatureLabel;
+    ImageButton changeCityButton;
 
     LocationManager mLocationManager;
     LocationListener mLocationListener;
@@ -57,6 +59,11 @@ public class WeatherController extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mCityLabel = findViewById(R.id.locationTv);
+        mWeatherImage = findViewById(R.id.ChangeCityLocation);
+        mTemperatureLabel = findViewById(R.id.tempTV);
+        changeCityButton = findViewById(R.id.ChangeCityButton);
     }
 
     @Override
@@ -131,6 +138,9 @@ public class WeatherController extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response){
                 Log.d("weatherApp", "success! JSON:  "+ response.toString());
 
+                WeatherDataModel weatherData = WeatherDataModel.fromJson(response);
+                updateUI(weatherData);
+
             }
 
             @Override
@@ -157,5 +167,14 @@ public class WeatherController extends AppCompatActivity {
         }
     }
 
+    private void updateUI(WeatherDataModel weather){
+        mTemperatureLabel.setText(weather.getTemperature());
+        mCityLabel.setText(weather.getCity());
+
+        int resourceID = getResources().getIdentifier(weather.getIconName(), "drawable", getPackageName());
+
+        mWeatherImage.setImageResource(resourceID);
+
+    }
 
 }

@@ -24,7 +24,6 @@
         android:layout_width="259dp"
         android:layout_height="59dp"
         android:layout_marginBottom="212dp"
-        android:autoText="false"
         android:background="@color/cardview_light_background"
         android:ems="10"
         android:hint="@string/enter_city_name"
